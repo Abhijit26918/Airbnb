@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -euo pipefail
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+
+if command -v pre-commit >/dev/null 2>&1; then
+  pre-commit run
+elif [ -x "$REPO_ROOT/.venv/Scripts/pre-commit.exe" ]; then
+  "$REPO_ROOT/.venv/Scripts/pre-commit.exe" run
+elif [ -x "$REPO_ROOT/.venv/bin/pre-commit" ]; then
+  "$REPO_ROOT/.venv/bin/pre-commit" run
+else
+  echo "pre-commit not found on PATH or in .venv — run 'make setup' (or 'uv sync --all-extras') first." >&2
+  exit 1
+fi

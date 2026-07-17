@@ -1,0 +1,56 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+.venv/
+venv/
+.ruff_cache/
+.pytest_cache/
+.mypy_cache/
+htmlcov/
+.coverage
+.coverage.*
+
+# uv
+uv.lock.tmp
+
+# Data — everything except .gitkeep and the small committed external cache
+data/raw/**
+data/interim/**
+data/processed/**
+!data/**/.gitkeep
+!data/external/
+data/external/*
+!data/external/*.parquet
+!data/external/.gitkeep
+
+# Models / experiment tracking
+models/**
+!models/.gitkeep
+mlruns/
+mlartifacts/
+
+# Reports (figures/metrics are generated; keep the markdown + .gitkeep)
+reports/metrics/*
+!reports/metrics/.gitkeep
+reports/figures/*
+!reports/figures/.gitkeep
+
+# Notebooks checkpoints
+.ipynb_checkpoints/
+
+# Env / secrets
+.env
+.env.*
+!.env.example
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Original upload artifacts — superseded by PROJECT_PLAN.md / TECHNICAL_DESIGN.md at repo root
+/files (1)/
+/files (1).zip
