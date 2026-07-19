@@ -1,0 +1,49 @@
+# Data contract for New York City. This file, not any Python constant, is the
+# source of truth for the scrape date, currency, geographic bounds, and the
+# columns that must never reach a feature matrix.
+
+city: new-york-city
+country: united-states
+region: ny
+
+# Inside Airbnb rotates snapshots quarterly. Pinned by hand — verified live
+# against https://insideairbnb.com/get-the-data/ on 2026-07-19.
+# If this date 404s later, keep the manifest's SHA256 as the record of what
+# was actually used and document the substitution before repinning.
+scrape_date: "2026-06-14"
+
+currency: USD
+
+# Used later (API input validation, geo features) to reject listings whose
+# coordinates fall outside the city.
+bbox:
+  lat_min: 40.4774
+  lat_max: 40.9176
+  lon_min: -74.2591
+  lon_max: -73.7002
+
+# Below this nightly price, a listing is treated as a data-entry artefact,
+# not a real offer (see TECHNICAL_DESIGN.md §3.3). City-dependent — a $10
+# floor is reasonable for NYC's price distribution, not portable as-is to a
+# city priced in IDR or COP.
+price_floor: 10
+
+# Columns dropped at load time, before anything else touches the frame.
+# See TECHNICAL_DESIGN.md §2 for the reasoning behind each one.
+drop_columns:
+  # LEAKAGE — these encode the target.
+  - estimated_revenue_l365d # ~= price * booked nights. R^2 0.97. FATAL.
+  - estimated_occupancy_l365d # denominator of the above; near-leak
+  # No signal / scrape metadata.
+  - scrape_id
+  - last_scraped
+  - source # "neighbourhood search" vs "previous scrape" -- scrape artefact
+  - calendar_updated # deprecated, all-null in recent scrapes
+  - calendar_last_scraped
+  - listing_url
+  - picture_url
+  - host_url
+  - host_thumbnail_url
+  - host_picture_url
+  - neighbourhood # free-text, dirty; use neighbourhood_cleansed instead
+  - host_neighbourhood # ~40% null and inconsistent

@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+import logging
+from pathlib import Path
+
 import typer
 
 app = typer.Typer(name="pricelens", no_args_is_help=True)
@@ -25,9 +28,17 @@ def version() -> None:
 
 
 @data_app.command("download")
-def data_download() -> None:
+def data_download(
+    city: str = typer.Option("nyc", help="Config name under configs/city/ (without .yaml)."),
+) -> None:
     """Fetch the pinned Inside Airbnb snapshot (Phase 1)."""
-    raise NotImplementedError("Phase 1: src/pricelens/data/download.py")
+    from pricelens.config import load_city_config
+    from pricelens.data.download import download_snapshot
+
+    logging.basicConfig(level=logging.INFO, format="%(message)s")
+    cfg = load_city_config(Path("configs/city") / f"{city}.yaml")
+    snapshot_dir = download_snapshot(cfg, Path("data/raw"))
+    typer.echo(f"snapshot ready at {snapshot_dir}")
 
 
 @data_app.command("clean")
